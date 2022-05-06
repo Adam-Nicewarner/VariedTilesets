@@ -84,40 +84,38 @@
 
         map.on('load', () => { //simplifying the function statement: arrow with brackets to define a function
 
-            map.addSource('uw-tiles', {
+            map.addSource('basemap-tiles', {
                 'type': 'raster',
                 'tiles': [
-                    'assets/uw/{z}/{x}/{y}.png'
+                    'assets/basemap/{z}/{x}/{y}.png'
                 ],
                 'tileSize': 256,
-                'attribution': 'Map tiles designed by Bo Zhao</a>'
+                'attribution': 'Map tiles designed by Adam Nicewarner</a>'
             });
 
-            map.addSource('lgbtq-tiles', {
+            map.addSource('health-tiles', {
                 'type': 'raster',
                 'tiles': [
-                    'assets/lgbtq/{z}/{x}/{y}.png'
+                    'assets/healthmap/{z}/{x}/{y}.png'
                 ],
                 'tileSize': 256,
-                'attribution': 'Map tiles designed by Bo Zhao'
+                'attribution': 'Map tiles designed by Adam Nicewarner'
             });
 
             map.addLayer({
-                'id': 'uw',
+                'id': 'basemap',
+                'type': 'raster',
+
+                'source': 'basemap-tiles'
+            });
+
+            map.addLayer({
+                'id': 'health',
                 'type': 'raster',
                 'layout': {
                     'visibility': 'none'
                 },
-                'source': 'uw-tiles'
-            });
-
-            map.addLayer({
-                'id': 'lgbtq',
-                'type': 'raster',
-                'layout': {
-                    'visibility': 'none'
-                },
-                'source': 'lgbtq-tiles'
+                'source': 'health-tiles'
             });
 
         });
@@ -126,12 +124,12 @@
         // After the last frame rendered before the map enters an "idle" state.
         map.on('idle', () => {
             // If these two layers were not added to the map, abort
-            if (!map.getLayer('uw') || !map.getLayer('lgbtq')) {
+            if (!map.getLayer('basemap') || !map.getLayer('health')) {
                 return;
             }
 
             // Enumerate ids of the layers.
-            const toggleableLayerIds = ['uw', 'lgbtq'];
+            const toggleableLayerIds = ['Basemap', 'Health Outcomes'];
 
             // Set up the corresponding toggle button for each layer.
             for (const id of toggleableLayerIds) {
