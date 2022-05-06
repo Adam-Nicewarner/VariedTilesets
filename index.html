@@ -19,6 +19,20 @@
             bottom: 0;
             width: 100%;
         }
+        .map-overlay {
+          position: absolute;
+          bottom: 30px;
+          left: 0;
+          background: rgba(255, 255, 255, 1.0);
+          border-style: solid;
+          border-width: 1px;
+          border-color: rgba(0, 0, 0, 0.2);
+          margin-left: 20px;
+          font-family: Arial, sans-serif;
+          overflow: auto;
+          border-radius: 3px;
+          display:none;
+      }
 
         /* the style of the layer control menu */
         #menu {
@@ -102,20 +116,59 @@
                 'attribution': 'Map tiles designed by Adam Nicewarner'
             });
 
-            map.addLayer({
-                'id': 'basemap',
+            map.addSource('healthtransparent-tiles', {
                 'type': 'raster',
+                'tiles': [
+                    'assets/healthmaptransparent/{z}/{x}/{y}.png'
+                ],
+                'tileSize': 256,
+                'attribution': 'Map tiles designed by Adam Nicewarner'
+            });
 
+            map.addSource('trans-tiles', {
+                'type': 'raster',
+                'tiles': [
+                    'assets/transmap/{z}/{x}/{y}.png'
+                ],
+                'tileSize': 256,
+                'attribution': 'Map tiles designed by Adam Nicewarner'
+            });
+
+            map.addLayer({
+                'id': 'Basemap',
+                'type': 'raster',
+                'layout': {
+                    'visibility': 'none'
+                },
                 'source': 'basemap-tiles'
             });
 
             map.addLayer({
-                'id': 'health',
+                'id': 'Health Outcomes',
                 'type': 'raster',
                 'layout': {
                     'visibility': 'none'
                 },
                 'source': 'health-tiles'
+            });
+
+            map.addLayer({
+                'id': 'Transparent Health Outcomes',
+                'type': 'raster',
+                'layout': {
+                    'visibility': 'none'
+                },
+                'source': 'healthtransparent-tiles'
+            });
+
+
+            map.addLayer({
+                'id': 'Trans',
+                'type': 'raster',
+                'layout': {
+                    'visibility': 'none'
+                },
+                'source': 'trans-tiles'
             });
 
         });
@@ -124,19 +177,21 @@
         // After the last frame rendered before the map enters an "idle" state.
         map.on('idle', () => {
             // If these two layers were not added to the map, abort
-            if (!map.getLayer('basemap') || !map.getLayer('health')) {
+            if (!map.getLayer('Basemap') || !map.getLayer('Health Outcomes') || !map.getLayer('Transparent Health Outcomes')|| !map.getLayer('Trans') ) {
                 return;
             }
 
             // Enumerate ids of the layers.
-            const toggleableLayerIds = ['Basemap', 'Health Outcomes'];
+            const toggleableLayerIds = ['Basemap', 'Health Outcomes', 'Transparent Health Outcomes', 'Trans'];
 
             // Set up the corresponding toggle button for each layer.
             for (const id of toggleableLayerIds) {
                 // Skip layers that already have a button set up.
                 if (document.getElementById(id)) {
-                    continue;
+                  continue;
                 }
+
+
 
                 // Create a link.
                 const link = document.createElement('a');
@@ -161,6 +216,13 @@
                         clickedLayer,
                         'visibility'
                     );
+                    if(clickedLayer == ("Health Outcomes") && visibility != "visible"){
+                    console.log("pog");
+                    document.getElementById('features').style.display = "block";
+                    } else {
+                      document.getElementById('features').style.display = "none";
+
+                    }
 
                     // Toggle layer visibility by changing the layout object's visibility property.
                     // if it is currently visible, after the clicking, it will be turned off.
@@ -184,5 +246,12 @@
         });
     </script>
 </body>
+
+<div class='map-overlay' id='features'>
+  <h2>Health Outcomes</h2>
+  <div id='text-escription'>
+   <img src="img/legend.JPG" alt="legend for map">
+  </div>
+</div>
 
 </html>
